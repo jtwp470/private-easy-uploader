@@ -3,7 +3,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import os
 
 
-UPLOAD_FOLDER = os.path.dirname(__file__) + "/files"
+UPLOAD_FOLDER = os.path.dirname(__file__) + "/files"  # 絶対パス
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)

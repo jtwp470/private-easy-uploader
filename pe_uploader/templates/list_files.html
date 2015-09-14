@@ -3,9 +3,9 @@
 
   <ul class="files">
     <table class="table table-bordered">
-      <th>id</th><th>File name</th><th>File Path</th>
+      <th>id</th><th>File name</th><th>Remove ?</th>
       {% for file in files %}
-      <tr><td>{{ file.id }}</td><td>{{ file.name }}</td><td>{{ file.path }}</td></tr>
+      <tr><td>{{ file.id }}</td><td><a href="{{ file.path }}">{{ file.name }}</a></td><td></td>
       {% endfor %}
     </table>
   </ul>

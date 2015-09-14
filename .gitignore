@@ -7,6 +7,8 @@ pip-selfcheck.json
 bin/
 lib/
 include/
+share/
 
 # Database
 *.db
+pe_uploader/files/

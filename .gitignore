@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[oc]
+pip-selfcheck.json
+## Virtualenv
+.Python
+bin/
+lib/
+include/
+
+# Database
+*.db

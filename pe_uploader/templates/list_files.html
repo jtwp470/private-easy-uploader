@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <ul class="files">
+    <table class="table table-bordered">
+      <th>id</th><th>File name</th><th>File Path</th>
+      {% for file in files %}
+      <tr><td>{{ file.id }}</td><td>{{ file.name }}</td><td>{{ file.path }}</td></tr>
+      {% endfor %}
+    </table>
+  </ul>
+{% endblock %}

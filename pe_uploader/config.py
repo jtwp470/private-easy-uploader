@@ -1,0 +1,3 @@
+# データベースの設定など
+SQLALCHEMY_DATABASE_URI = "sqlite:///peuploader.db"
+SECRET_KEY = "SECRET_KEY"  # PLEASE REPLACE BEFORE PUBLIC THIS APP

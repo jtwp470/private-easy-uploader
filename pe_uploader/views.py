@@ -1,6 +1,6 @@
 import os
 from flask import request, redirect, url_for, render_template, \
-    send_from_directory, flash
+    send_from_directory, flash, jsonify
 from pe_uploader import app, db
 from pe_uploader.models import Files
 from werkzeug import secure_filename
@@ -42,11 +42,13 @@ def upload_file():
                                     filename_hashed)
             fileobj.save(filepath)
             # Register db
-            file = Files(name=filename_raw, path="files/" + filename_hashed)
+            file = Files(name=filename_raw, hashed=filename_hashed,
+                         path="files/" + filename_hashed)
             db.session.add(file)
             db.session.commit()
             flash('<div class="alert alert-success" role="alert">Successfly upload file</div>')
             # return redirect(url_for('uploaded_file', filename=filename))
+            return redirect(url_for('list_files'))
         flash('<div class="alert alert-info" role="alert">No file uploaded.</div>')
         return redirect(url_for('list_files'))
     return render_template('upload.html')
@@ -59,6 +61,14 @@ def uploaded_file(filename):
 
 
 # ファイルを削除する
-@app.route('/files/<filename>/delete', methods=['DELETE'])
-def delete_file(filename):
-    return NotImplementedError('DELETE')
+@app.route('/files/<filehashed>/delete', methods=['DELETE'])
+def delete_file(filehashed):
+    file = Files.query.filter(Files.hashed == filehashed).first()
+    if file is None:
+        response = jsonify({'status': 'Not Found'})
+        response.status_code = 404
+        return response
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filehashed))  # ファイルを削除
+    db.session.delete(file)
+    db.session.commit()
+    return jsonify({'status': 'OK'})

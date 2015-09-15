@@ -10,8 +10,9 @@ class Files(db.Model):
     __tablename__ = 'files'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.Text)
-    path = db.Column(db.Text)
+    name = db.Column(db.Text)  # ファイル名
+    hashed = db.Column(db.Text)  # ファイル名をハッシュ化したもの
+    path = db.Column(db.Text)  # 相対パス
 
     def __repr__(self):
         return "<File id={id} name={name} path={path}>".format(

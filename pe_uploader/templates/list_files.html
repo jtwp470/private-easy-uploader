@@ -3,9 +3,35 @@
 
   <ul class="files">
     <table class="table table-bordered">
-      <th>id</th><th>File name</th><th>Remove ?</th>
+      <th>id</th><th>File name</th><th></th>
       {% for file in files %}
-      <tr><td>{{ file.id }}</td><td><a href="{{ file.path }}">{{ file.name }}</a></td><td></td>
+      <tr><td>{{ file.id }}</td><td><a href="{{ file.path }}">{{ file.name }}</a></td>
+        <td>
+          <div class="text-center">
+            <a class="user-delete-link" href="#" data-delete-url="{{ url_for('delete_file', filehashed=file.hashed) }}">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            </a>
+          </div>
+          <script>
+    $(function() {
+        $(".user-delete-link").on("click", function() {
+            var delete_url = $(this).attr('data-delete-url');
+            $.ajax({
+                url: delete_url,
+                type: 'DELETE',
+                success: function(response) {
+                    if (response.status == 'OK') {
+                        window.location = '{{ url_for('list_files') }}';
+                    } else {
+                        alert('Delete failed.')
+                    }
+                }
+            });
+            return false;
+        });
+    });
+</script>
+        </td>
       {% endfor %}
     </table>
   </ul>

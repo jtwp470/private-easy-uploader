@@ -5,6 +5,7 @@ from flask import request, redirect, url_for, render_template, \
     send_from_directory, flash, jsonify, session, g
 from pe_uploader import app, db
 from pe_uploader.models import Files, User
+from pe_uploader.forms import LoginForm
 from werkzeug import secure_filename
 
 
@@ -30,7 +31,7 @@ def load_user():
 def list_files():
     files = Files.query.order_by(Files.id.desc()).all()
     print(files)
-    return render_template('list_files.html', files=files)
+    return render_template('list_files.html', files=files, user=g.user)
 
 
 def allowed_file(filename):
@@ -102,19 +103,18 @@ def delete_file(filehashed):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
+    form = LoginForm(request.form)
+    if form.validate_on_submit():
         user, authenticated = User.authenticate(db.session.query,
-                                                request.form['name'],
-                                                request.form['password'])
+                                                form.name.data,
+                                                form.password.data)
         if authenticated:
             session['user_id'] = user.id
-            # session['nonce'] =
-            # TODO Prevent CSRF
             flash('<div class="alert alert-success" role="alert">You were logged in</div>')
             return redirect(url_for('list_files'))
         else:
             flash('<div class="alert alert-danger" role="alert">Invalid user or password</div>')
-    return render_template('login.html')
+    return render_template('login.html', form=form)
 
 
 @app.route('/logout')

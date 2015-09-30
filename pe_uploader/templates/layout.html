@@ -37,11 +37,15 @@
 
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/upload">upload</a></li>
+            <li><a href="{{ url_for('upload_file') }}">upload</a></li>
           </ul>
           <!-- navber-right -->
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">login</a></li>
+            {% if session.user_id %}
+            <li><a href="{{ url_for('logout') }}">logout</a></li>
+            {% else %}
+            <li><a href="{{ url_for('login') }}">login</a></li>
+            {% endif %}
           </ul>
           <!-- navber-right -->
 

@@ -1,4 +1,5 @@
 import os
+import re
 from functools import wraps
 
 from flask import request, redirect, url_for, render_template, \
@@ -6,7 +7,13 @@ from flask import request, redirect, url_for, render_template, \
 from pe_uploader import app, db
 from pe_uploader.models import Files, User
 from pe_uploader.forms import LoginForm
-from werkzeug import secure_filename
+# from werkzeug import secure_filename
+
+
+def secure_filename(name):
+    # 2個以上の.と0個以上の/を置き換え置換
+    name = re.sub(r'\.{2}\/', "", name)
+    return name.replace(" ", "_")  # 空白をアンダースコアに置換
 
 
 def login_required(f):
@@ -30,7 +37,7 @@ def load_user():
 @app.route('/')
 def list_files():
     files = Files.query.order_by(Files.id.desc()).all()
-    print(files)
+    files = reversed(files)
     return render_template('list_files.html', files=files, user=g.user)
 
 
@@ -95,7 +102,7 @@ def delete_file(filehashed):
         response = jsonify({'status': 'Not Found'})
         response.status_code = 404
         return response
-    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filehashed))  # ファイルを削除
+    os.remove(os.path.join(app.config['UPLOAD_FOLDER'], file.hashed))  # ファイルを削除
     db.session.delete(file)
     db.session.commit()
     return jsonify({'status': 'OK'})
@@ -110,6 +117,7 @@ def login():
                                                 form.password.data)
         if authenticated:
             session['user_id'] = user.id
+            session['user_name'] = user.name
             flash('<div class="alert alert-success" role="alert">You were logged in</div>')
             return redirect(url_for('list_files'))
         else:
@@ -119,9 +127,9 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
+    session.clear()
     flash('<div class="alert alert-success" role="alert">You were logged out</div>')
-    return redirect(url_for('list_files'))
+    return redirect('/')
 
 
 @app.route('/admin/add', methods=["GET", "POST"])
@@ -151,9 +159,11 @@ def edit_admin():
     if request.method == 'POST':
         if request.form['name']:
             admin.name = request.form['name']
+            f = "Change username"
         if request.form['password']:
             admin.password = request.form['password']
+            f = "Change password"
         db.session.commit()
-        flash('<div class="alert alert-success" role="alert">Successfly change your password</div>')
+        flash('<div class="alert alert-success" role="alert">{}</div>'.format(f))
         return redirect(url_for('logout'))
     return render_template('admin/edit.html', user=admin)

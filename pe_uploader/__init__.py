@@ -4,7 +4,7 @@ import os
 
 
 UPLOAD_FOLDER = os.path.dirname(__file__) + "/files"  # 絶対パス
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'html', 'zip'])
 
 app = Flask(__name__)
 app.debug = True
